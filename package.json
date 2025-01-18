@@ -15,5 +15,8 @@
 	"dependencies": {
 		"prompts": "^2.4.2",
 		"yargs": "^17.7.2"
-	}
+	},
+	"files": [
+		"templates"
+	]
 }
