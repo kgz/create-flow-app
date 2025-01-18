@@ -12,7 +12,9 @@ const getDirectories = async source =>
 		.filter(dirent => dirent.isDirectory())
 		.map(dirent => dirent.name)
 
-const getProjectName = async () => {
+
+/** @return {Promise<{"projectName": String, "template": String}>} */
+const getProjectConfig = async () => {
 	/** @type {String|null|undefined} */
 	let projectName = yargs.argv.name;
 
@@ -20,24 +22,20 @@ const getProjectName = async () => {
 	let template = yargs.argv.template;
 
 	if (!projectName) {
-		// const rl = createInterface();
-		// projectName = await askQuestion(rl, 'Enter project name: ');
-		// rl.close();
-
 		const response = await prompts({
 			type: 'text',
 			name: 'value',
 			message: 'Project Path',
 			initial: process.cwd().split("/").at(-1)
-
-			// validate: value => value
 		});
 
-		projectName = response.value
+		if (!(projectName = response.value)) {
+			console.log("Setup Cancelled")
+			process.exit()
+		}
 	}
 
 	if (!template) {
-
 		const options = await getDirectories(__dirname + "/templates/")
 		console.log({ options })
 		const response = await prompts(
@@ -49,30 +47,13 @@ const getProjectName = async () => {
 			}
 		);
 
-		template = response.template;
-
-		console.log(template)
+		if (!(template = response.template)) {
+			console.log("Setup Cancelled")
+			process.exit()
+		}
 	}
 
 	return { projectName, template };
-};
-
-
-const readline = require('readline');
-
-const createInterface = () => {
-	return readline.createInterface({
-		input: process.stdin,
-		output: process.stdout,
-	});
-};
-
-const askQuestion = (rl, question) => {
-	return new Promise((resolve) => {
-		rl.question(question, (answer) => {
-			resolve(answer);
-		});
-	});
 };
 
 const mkDir = (path) => {
@@ -85,24 +66,22 @@ const mkDir = (path) => {
 	}
 }
 
-const copyDir = () => {
-	fs.cpSync(src, dest, { recursive: true });
-}
-
 const main = async () => {
-	console.log(process.cwd(), __dirname);
-	const { projectName, template } = await getProjectName();
+	// get config
+	const { projectName, template } = await getProjectConfig();
+
+	// make the project dir 
 	mkDir(projectName)
+
+	// copy selected template
 	fs.cpSync(__dirname + "/templates/" + template, projectName, { recursive: true });
+
+	// rename package name to projectName - probably needs to be something else as projectName can be a path
 	fs.readFile(projectName + '/package.json', function (err, data) {
-
 		if (err) throw err;
-
-		const pjson = JSON.parse(data);
-		pjson.name = projectName
-		fs.writeFileSync(projectName + '/package.json', JSON.stringify(pjson, null, 4));
-
-
+		const packageJson = JSON.parse(data);
+		packageJson.name = projectName
+		fs.writeFileSync(projectName + '/package.json', JSON.stringify(packageJson, null, 4));
 	});
 };
 

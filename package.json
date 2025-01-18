@@ -10,7 +10,7 @@
 	"license": "ISC",
 	"description": "",
 	"bin": {
-		"setup-project": "./setup-script.js"
+		"setup-project": "./setup-script.cjs"
 	},
 	"dependencies": {
 		"prompts": "^2.4.2",
