@@ -90,7 +90,7 @@ const copyDir = () => {
 }
 
 const main = async () => {
-	console.log(process.cwd());
+	console.log(process.cwd(), import.meta.dirname);
 	const { projectName, template } = await getProjectName();
 	mkDir(projectName)
 	fs.cpSync("templates/" + template, projectName, { recursive: true });
