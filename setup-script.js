@@ -93,7 +93,7 @@ const main = async () => {
 	console.log(process.cwd(), __dirname);
 	const { projectName, template } = await getProjectName();
 	mkDir(projectName)
-	fs.cpSync("templates/" + template, projectName, { recursive: true });
+	fs.cpSync(__dirname + "/templates/" + template, projectName, { recursive: true });
 	fs.readFile(projectName + '/package.json', function (err, data) {
 
 		if (err) throw err;
