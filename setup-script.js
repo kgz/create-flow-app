@@ -38,7 +38,7 @@ const getProjectName = async () => {
 
 	if (!template) {
 
-		const options = await getDirectories("templates")
+		const options = await getDirectories(__dirname + "/templates/")
 		console.log({ options })
 		const response = await prompts(
 			{
