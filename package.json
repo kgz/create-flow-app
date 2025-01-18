@@ -1,0 +1,19 @@
+{
+	"name": "create-flow-app",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"bin": {
+		"setup-project": "./setup-script.js"
+	},
+	"dependencies": {
+		"prompts": "^2.4.2",
+		"yargs": "^17.7.2"
+	}
+}
