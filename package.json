@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "node --test"
 	},
 	"keywords": [],
 	"author": "",
@@ -13,6 +13,7 @@
 		"setup-project": "./setup-script.cjs"
 	},
 	"dependencies": {
+		"glob": "^11.0.1",
 		"prompts": "^2.4.2",
 		"yargs": "^17.7.2"
 	},

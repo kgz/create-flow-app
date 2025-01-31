@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const yargs = require('yargs');
 const fs = require('node:fs');
+const glob = require('glob');
 const prompts = require('prompts');
 
 /**
@@ -12,6 +13,10 @@ const getDirectories = async source =>
 		.filter(dirent => dirent.isDirectory())
 		.map(dirent => dirent.name)
 
+const cancelled = () => {
+	console.log("Setup Cancelled")
+	process.exit()
+}
 
 /** @return {Promise<{"projectName": String, "template": String}>} */
 const getProjectConfig = async () => {
@@ -28,11 +33,7 @@ const getProjectConfig = async () => {
 			message: 'Project Path',
 			initial: process.cwd().split("/").at(-1)
 		});
-
-		if (!(projectName = response.value)) {
-			console.log("Setup Cancelled")
-			process.exit()
-		}
+		response.value || cancelled()
 	}
 
 	if (!template) {
@@ -46,16 +47,15 @@ const getProjectConfig = async () => {
 				choices: options.map(val => ({ title: val, value: val }))
 			}
 		);
-
-		if (!(template = response.template)) {
-			console.log("Setup Cancelled")
-			process.exit()
-		}
+		response.template || cancelled()
 	}
 
 	return { projectName, template };
 };
 
+/**
+ * @param {string} path 
+ */
 const mkDir = (path) => {
 	try {
 		if (!fs.existsSync(path)) {
@@ -83,6 +83,17 @@ const main = async () => {
 		packageJson.name = projectName
 		fs.writeFileSync(projectName + '/package.json', JSON.stringify(packageJson, null, 4));
 	});
+
+
+	const after_script = `${__dirname}/templates/${template}/.template.{js,cjs}`
+	if ((after_files = glob.sync(after_script).at(0))) {
+		try {
+			require(after_files);
+		} catch (e) {
+			console.error(`Error executing template script for ${template}.`)
+			throw e
+		}
+	}
 };
 
 main().catch(console.error);
