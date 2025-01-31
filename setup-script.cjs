@@ -31,14 +31,13 @@ const getProjectConfig = async () => {
 			type: 'text',
 			name: 'value',
 			message: 'Project Path',
-			initial: process.cwd().split("/").at(-1)
+			initial: 'myapp'//process.cwd().split("/").at(-1)
 		});
 		response.value || cancelled()
 	}
 
 	if (!template) {
 		const options = await getDirectories(__dirname + "/templates/")
-		console.log({ options })
 		const response = await prompts(
 			{
 				type: 'select',
@@ -63,6 +62,7 @@ const mkDir = (path) => {
 		}
 	} catch (err) {
 		console.error(err);
+		process.exit()
 	}
 }
 
